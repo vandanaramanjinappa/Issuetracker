@@ -40,11 +40,17 @@ def home():
 def get_issues():
 
     severity = request.args.get("severity")
+    sort = request.args.get("sort")
 
     if severity:
-        all_issues = Issue.query.filter_by(severity=severity).all()
+        query = Issue.query.filter_by(severity=severity)
     else:
-        all_issues = Issue.query.all()
+        query = Issue.query
+
+    if sort == "desc":
+        all_issues = query.order_by(Issue.id.desc()).all()
+    else:
+        all_issues = query.order_by(Issue.id.asc()).all()
 
     result = []
 
@@ -58,87 +64,6 @@ def get_issues():
         })
 
     return jsonify(result)
-
-
-# CREATE - Add new issue with validation
-@app.route("/issues", methods=["POST"])
-def create_issue():
-
-    data = request.json
-
-    # Validation checks
-    if not data.get("title"):
-        return jsonify({
-            "message": "Title is required"
-        }), 400
-
-    if not data.get("description"):
-        return jsonify({
-            "message": "Description is required"
-        }), 400
-
-    valid_severity = ["Low", "Medium", "High", "Critical"]
-
-    if data.get("severity") not in valid_severity:
-        return jsonify({
-            "message": "Invalid severity value"
-        }), 400
-
-    valid_status = ["Open", "In Progress", "Resolved"]
-
-    if data.get("status") not in valid_status:
-        return jsonify({
-            "message": "Invalid status value"
-        }), 400
-
-
-    new_issue = Issue(
-        title=data["title"],
-        description=data["description"],
-        severity=data["severity"],
-        status=data["status"]
-    )
-
-    db.session.add(new_issue)
-    db.session.commit()
-
-    return jsonify({
-        "message": "Issue created successfully",
-        "issue": {
-            "id": new_issue.id,
-            "title": new_issue.title,
-            "description": new_issue.description,
-            "severity": new_issue.severity,
-            "status": new_issue.status
-        }
-    }), 201
-
-
-# UPDATE - Update existing issue
-@app.route("/issues/<int:id>", methods=["PUT"])
-def update_issue(id):
-
-    issue = Issue.query.get(id)
-
-    if issue:
-
-        data = request.json
-
-        issue.title = data.get("title", issue.title)
-        issue.description = data.get("description", issue.description)
-        issue.severity = data.get("severity", issue.severity)
-        issue.status = data.get("status", issue.status)
-
-        db.session.commit()
-
-        return jsonify({
-            "message": "Issue updated successfully"
-        })
-
-    return jsonify({
-        "message": "Issue not found"
-    }), 404
-
 
 # DELETE - Remove issue
 @app.route("/issues/<int:id>", methods=["DELETE"])
