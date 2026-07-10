@@ -35,11 +35,16 @@ def home():
     return "Issue and Vulnerability Tracking System is running!"
 
 
-# READ - Get all issues
+# READ - Get all issues with search by severity
 @app.route("/issues", methods=["GET"])
 def get_issues():
 
-    all_issues = Issue.query.all()
+    severity = request.args.get("severity")
+
+    if severity:
+        all_issues = Issue.query.filter_by(severity=severity).all()
+    else:
+        all_issues = Issue.query.all()
 
     result = []
 
