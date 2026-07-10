@@ -1,7 +1,7 @@
 # Issue and Vulnerability Tracking System
 
 ## Company
-Microsoft (Sample Company)
+Microsoft 
 
 ## Description
 This project is an API-based Issue and Vulnerability Tracking System developed using Python and Flask.
