@@ -1,5 +1,6 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_sqlalchemy import SQLAlchemy
+from flask import render_template
 
 app = Flask(__name__)
 
@@ -33,6 +34,10 @@ class Issue(db.Model):
 @app.route('/')
 def home():
     return "Issue and Vulnerability Tracking System is running!"
+
+@app.route("/dashboard")
+def dashboard():
+    return render_template("index.html")
 
 
 # READ - Get all issues with search by severity
