@@ -1,6 +1,14 @@
 from flask import Flask, jsonify, request
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+
+# Database configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///issues.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
 
 # Code Attribution:
 # Flask framework reference:
@@ -8,24 +16,18 @@ app = Flask(__name__)
 #
 # Flask tutorial reference:
 # https://youtu.be/oQ5UfJqW5Jo?si=c8DqVvnp8oKWG-2z
+#
+# Flask-SQLAlchemy reference:
+# https://flask-sqlalchemy.palletsprojects.com/
 
 
-issues = [
-    {
-        "id": 1,
-        "title": "Login authentication failure",
-        "description": "Users cannot login to the system",
-        "severity": "High",
-        "status": "Open"
-    },
-    {
-        "id": 2,
-        "title": "Outdated security dependency",
-        "description": "A dependency requires a security update",
-        "severity": "Medium",
-        "status": "Resolved"
-    }
-]
+# Issue database model
+class Issue(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(200), nullable=False)
+    severity = db.Column(db.String(50), nullable=False)
+    status = db.Column(db.String(50), nullable=False)
 
 
 @app.route('/')
@@ -33,57 +35,104 @@ def home():
     return "Issue and Vulnerability Tracking System is running!"
 
 
+# READ - Get all issues
 @app.route("/issues", methods=["GET"])
 def get_issues():
-    return jsonify(issues)
+
+    all_issues = Issue.query.all()
+
+    result = []
+
+    for issue in all_issues:
+        result.append({
+            "id": issue.id,
+            "title": issue.title,
+            "description": issue.description,
+            "severity": issue.severity,
+            "status": issue.status
+        })
+
+    return jsonify(result)
 
 
+# CREATE - Add new issue
 @app.route("/issues", methods=["POST"])
 def create_issue():
 
-    new_issue = request.json
+    data = request.json
 
-    issues.append(new_issue)
+    new_issue = Issue(
+        title=data["title"],
+        description=data["description"],
+        severity=data["severity"],
+        status=data["status"]
+    )
+
+    db.session.add(new_issue)
+    db.session.commit()
 
     return jsonify({
         "message": "Issue created successfully",
-        "issue": new_issue
+        "issue": {
+            "id": new_issue.id,
+            "title": new_issue.title,
+            "description": new_issue.description,
+            "severity": new_issue.severity,
+            "status": new_issue.status
+        }
     }), 201
 
+
+# UPDATE - Update existing issue
 @app.route("/issues/<int:id>", methods=["PUT"])
 def update_issue(id):
 
-    for issue in issues:
-        if issue["id"] == id:
+    issue = Issue.query.get(id)
 
-            updated_data = request.json
+    if issue:
 
-            issue.update(updated_data)
+        data = request.json
 
-            return jsonify({
-                "message": "Issue updated successfully",
-                "issue": issue
-            })
+        issue.title = data.get("title", issue.title)
+        issue.description = data.get("description", issue.description)
+        issue.severity = data.get("severity", issue.severity)
+        issue.status = data.get("status", issue.status)
+
+        db.session.commit()
+
+        return jsonify({
+            "message": "Issue updated successfully"
+        })
 
     return jsonify({
         "message": "Issue not found"
     }), 404
 
+
+# DELETE - Remove issue
 @app.route("/issues/<int:id>", methods=["DELETE"])
 def delete_issue(id):
 
-    for issue in issues:
-        if issue["id"] == id:
+    issue = Issue.query.get(id)
 
-            issues.remove(issue)
+    if issue:
 
-            return jsonify({
-                "message": "Issue deleted successfully"
-            })
+        db.session.delete(issue)
+        db.session.commit()
+
+        return jsonify({
+            "message": "Issue deleted successfully"
+        })
 
     return jsonify({
         "message": "Issue not found"
     }), 404
+
+
+# Create database table
+with app.app_context():
+    db.create_all()
+
 
 if __name__ == '__main__':
     app.run(debug=True)
