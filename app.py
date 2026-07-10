@@ -69,6 +69,21 @@ def update_issue(id):
         "message": "Issue not found"
     }), 404
 
+@app.route("/issues/<int:id>", methods=["DELETE"])
+def delete_issue(id):
+
+    for issue in issues:
+        if issue["id"] == id:
+
+            issues.remove(issue)
+
+            return jsonify({
+                "message": "Issue deleted successfully"
+            })
+
+    return jsonify({
+        "message": "Issue not found"
+    }), 404
 
 if __name__ == '__main__':
     app.run(debug=True)
