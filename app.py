@@ -1,6 +1,15 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
+
+# Code Attribution:
+# Flask framework reference:
+# https://python-adv-web-apps.readthedocs.io/en/latest/flask.html
+#
+# Flask tutorial reference:
+# https://youtu.be/oQ5UfJqW5Jo?si=c8DqVvnp8oKWG-2z
+
+
 issues = [
     {
         "id": 1,
@@ -19,23 +28,28 @@ issues = [
 ]
 
 
+@app.route('/')
+def home():
+    return "Issue and Vulnerability Tracking System is running!"
+
+
 @app.route("/issues", methods=["GET"])
 def get_issues():
     return jsonify(issues)
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
-@app.route('/')
-def home():
-    return "Issue and Vulnerability Tracking System is running!"
+@app.route("/issues", methods=["POST"])
+def create_issue():
+
+    new_issue = request.json
+
+    issues.append(new_issue)
+
+    return jsonify({
+        "message": "Issue created successfully",
+        "issue": new_issue
+    }), 201
+
 
 if __name__ == '__main__':
     app.run(debug=True)
-    # Code Attribution:
-# Flask framework reference:
-# https://python-adv-web-apps.readthedocs.io/en/latest/flask.html
-#
-# Flask tutorial reference:
-# https://youtu.be/oQ5UfJqW5Jo?si=c8DqVvnp8oKWG-2z
-
