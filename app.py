@@ -55,11 +55,37 @@ def get_issues():
     return jsonify(result)
 
 
-# CREATE - Add new issue
+# CREATE - Add new issue with validation
 @app.route("/issues", methods=["POST"])
 def create_issue():
 
     data = request.json
+
+    # Validation checks
+    if not data.get("title"):
+        return jsonify({
+            "message": "Title is required"
+        }), 400
+
+    if not data.get("description"):
+        return jsonify({
+            "message": "Description is required"
+        }), 400
+
+    valid_severity = ["Low", "Medium", "High", "Critical"]
+
+    if data.get("severity") not in valid_severity:
+        return jsonify({
+            "message": "Invalid severity value"
+        }), 400
+
+    valid_status = ["Open", "In Progress", "Resolved"]
+
+    if data.get("status") not in valid_status:
+        return jsonify({
+            "message": "Invalid status value"
+        }), 400
+
 
     new_issue = Issue(
         title=data["title"],
