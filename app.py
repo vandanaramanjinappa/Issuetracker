@@ -50,6 +50,25 @@ def create_issue():
         "issue": new_issue
     }), 201
 
+@app.route("/issues/<int:id>", methods=["PUT"])
+def update_issue(id):
+
+    for issue in issues:
+        if issue["id"] == id:
+
+            updated_data = request.json
+
+            issue.update(updated_data)
+
+            return jsonify({
+                "message": "Issue updated successfully",
+                "issue": issue
+            })
+
+    return jsonify({
+        "message": "Issue not found"
+    }), 404
+
 
 if __name__ == '__main__':
     app.run(debug=True)
