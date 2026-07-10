@@ -65,6 +65,75 @@ def get_issues():
 
     return jsonify(result)
 
+# CREATE - Add new issue with validation
+@app.route("/issues", methods=["POST"])
+def create_issue():
+
+    data = request.json
+
+    if not data.get("title"):
+        return jsonify({"message": "Title is required"}), 400
+
+    if not data.get("description"):
+        return jsonify({"message": "Description is required"}), 400
+
+    valid_severity = ["Low", "Medium", "High", "Critical"]
+
+    if data.get("severity") not in valid_severity:
+        return jsonify({"message": "Invalid severity value"}), 400
+
+    valid_status = ["Open", "In Progress", "Resolved"]
+
+    if data.get("status") not in valid_status:
+        return jsonify({"message": "Invalid status value"}), 400
+
+    new_issue = Issue(
+        title=data["title"],
+        description=data["description"],
+        severity=data["severity"],
+        status=data["status"]
+    )
+
+    db.session.add(new_issue)
+    db.session.commit()
+
+    return jsonify({
+        "message": "Issue created successfully",
+        "issue": {
+            "id": new_issue.id,
+            "title": new_issue.title,
+            "description": new_issue.description,
+            "severity": new_issue.severity,
+            "status": new_issue.status
+        }
+    }), 201
+
+
+# UPDATE - Update existing issue
+@app.route("/issues/<int:id>", methods=["PUT"])
+def update_issue(id):
+
+    issue = Issue.query.get(id)
+
+    if issue:
+
+        data = request.json
+
+        issue.title = data.get("title", issue.title)
+        issue.description = data.get("description", issue.description)
+        issue.severity = data.get("severity", issue.severity)
+        issue.status = data.get("status", issue.status)
+
+        db.session.commit()
+
+        return jsonify({
+            "message": "Issue updated successfully"
+        })
+
+    return jsonify({
+        "message": "Issue not found"
+    }), 404
+
 # DELETE - Remove issue
 @app.route("/issues/<int:id>", methods=["DELETE"])
 def delete_issue(id):
@@ -83,6 +152,22 @@ def delete_issue(id):
     return jsonify({
         "message": "Issue not found"
     }), 404
+
+# REPORT - Issue summary
+@app.route("/report", methods=["GET"])
+def report():
+
+    total = Issue.query.count()
+    open_count = Issue.query.filter_by(status="Open").count()
+    resolved_count = Issue.query.filter_by(status="Resolved").count()
+    in_progress_count = Issue.query.filter_by(status="In Progress").count()
+
+    return jsonify({
+        "total_issues": total,
+        "open_issues": open_count,
+        "resolved_issues": resolved_count,
+        "in_progress_issues": in_progress_count
+    })
 
 
 # Create database table
