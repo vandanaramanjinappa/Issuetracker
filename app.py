@@ -31,13 +31,10 @@ class Issue(db.Model):
     status = db.Column(db.String(50), nullable=False)
 
 
-@app.route('/')
+@app.route("/")
 def home():
-    return "Issue and Vulnerability Tracking System is running!"
-
-@app.route("/dashboard")
-def dashboard():
     return render_template("index.html")
+
 
 
 # READ - Get all issues with search by severity
