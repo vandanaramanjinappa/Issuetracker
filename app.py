@@ -121,10 +121,13 @@ def update_issue(id):
 
         data = request.json
 
-        issue.title = data.get("title", issue.title)
-        issue.description = data.get("description", issue.description)
-        issue.severity = data.get("severity", issue.severity)
-        issue.status = data.get("status", issue.status)
+        issue.title = data["title"] if data.get("title", "").strip() else issue.title
+
+        issue.description = data["description"] if data.get("description", "").strip() else issue.description
+
+        issue.severity = data["severity"] if data.get("severity", "").strip() else issue.severity
+
+        issue.status = data["status"] if data.get("status", "").strip() else issue.status
 
         db.session.commit()
 
