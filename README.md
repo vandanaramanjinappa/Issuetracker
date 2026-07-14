@@ -144,15 +144,18 @@ The repository includes:
 
 ---
 
-## References
+## Code Attribution Summary
 
-Additional documentation is available in the references/resources.md folder.
+The project was primarily developed by me. External resources were used for learning and reference during development.
 
-Contents:
+* Self:Project implementation, feature integration, testing, Git management, documentation, search, sorting, validation, dashboard, and reporting features.
+* Flask Documentation:Flask application setup, routing, and project structure.https://python-adv-web-apps.readthedocs.io/en/latest/flask.html
+* Flask CRUD API Tutorial (YouTube):Guidance on REST API concepts and CRUD implementation.https://youtu.be/oQ5UfJqW5Jo
+* GitHub Documentation:README structure and Markdown formatting.
+* OpenAI ChatGPT for frontend :Assistance with HTML, CSS, JavaScript, debugging, and code explanations.
 
-- code_attribution
-- resources
-- tools_used
+A complete list of references, learning resources, AI assistance, and development tools is available in `resources.md`.
+
 
 ---
 
