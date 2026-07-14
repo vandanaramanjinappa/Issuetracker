@@ -10,18 +10,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-
-# Code Attribution:
-# Flask framework reference:
-# https://python-adv-web-apps.readthedocs.io/en/latest/flask.html
-#
-# Flask tutorial reference:
-# https://youtu.be/oQ5UfJqW5Jo?si=c8DqVvnp8oKWG-2z
-#
-# Flask-SQLAlchemy reference:
-# https://flask-sqlalchemy.palletsprojects.com/
-
-
 # Issue database model
 class Issue(db.Model):
     id = db.Column(db.Integer, primary_key=True)
