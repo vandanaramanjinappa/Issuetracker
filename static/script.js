@@ -187,7 +187,6 @@ function editIssue(id) {
 }
 
 
-
 // Dashboard counts
 
 function updateDashboard(data) {
