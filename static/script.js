@@ -202,4 +202,4 @@ function updateDashboard(data) {
     document.getElementById("resolvedIssues").innerHTML =
         data.filter(issue => issue.status === "Resolved").length;
 
-}
+} 
