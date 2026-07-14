@@ -105,7 +105,7 @@ http://127.0.0.1:5000
 The application uses SQLite with Flask-SQLAlchemy.
 
 Each issue contains:
-
+- ID
 - Title
 - Description
 - Severity
