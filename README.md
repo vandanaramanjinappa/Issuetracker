@@ -154,7 +154,7 @@ The project was primarily developed by me. External resources were used for lear
 * GitHub Documentation:README structure and Markdown formatting.
 * OpenAI ChatGPT for frontend :Assistance with HTML, CSS, JavaScript, debugging, and code explanations.
 
-A complete list of references, learning resources, AI assistance, and development tools is available in `resources.md`.
+A complete list of references, learning resources, AI assistance, and development tools is available in resources.md.
 
 
 ---
